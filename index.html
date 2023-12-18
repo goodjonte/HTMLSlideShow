@@ -7,11 +7,48 @@
 </head>
 <body>
     <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: "Courier New", monospace;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            margin: 0;
+        }
+        .flexCol{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .storedImage{
             max-width: 200px;
+            max-height: 200px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #storage {
+            height: 200px;
+        }
+        #menu {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+        #slideshow {
+            height: 100vh;
+            width: 100vw;
+            background-repeat: no-repeat;
+            background-size: contain;         
+            background-position: center center;
         }
     </style>
     <script>
+        var isSliding = false;
+        var delay = 5;
+
         function setImage(element) {
             var file = element.files[0];
             var reader = new FileReader();
@@ -28,22 +65,72 @@
             document.getElementById("storage").appendChild(newImage);
         }
 
-        // function onLoad() {
-        //     setTimeout(() => {
-        //         changeBackground(localStorage.getItem("image"));
-        //     }, 1000);
-        // }
+        function startSlideshow() {
+            document.getElementById("menu").classList.add("hidden");
+            document.getElementById("slideshow").classList.remove("hidden");
 
-        // onLoad();
+            var images = document.getElementById("storage").children;
+            delay = document.getElementById("delay").value;
+
+            isSliding = true;
+            slide(images);
+        }
+
+        function endSlideshow() {
+            isSliding = false;
+            document.getElementById("menu").classList.remove("hidden");
+            document.getElementById("slideshow").classList.add("hidden");
+        }
+
+        function slide(imageElements, index = 0) {
+            setTimeout(() => {
+                document.getElementById("slideshow").style.backgroundImage = "url('"+ imageElements[index].src +"')";
+
+                if(isSliding && index === imageElements.length - 1) {
+                    slide(imageElements);
+                }
+                else if(isSliding){
+                    index = index + 1;
+                    slide(imageElements, index);
+                }
+                else{
+                    document.getElementById("menu").classList.remove("hidden");
+                    document.getElementById("slideshow").classList.add("hidden");
+                }
+            }, (delay * 1000))
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && isSliding) {
+                endSlideshow();
+            }
+        });
     </script>
     
     <div id="menu">
-        <input type="file" onchange="setImage(this)" />
-        <div id="storage" >
+        <div class="flexCol">
+            <h2>Simple SlideShow</h2>
+            <p>1. Set Configuration Here</p>
+            <p>2. Click Start Slideshow</p>
+            <p>3. Press Escape To Get Back Here</p>
+        </div>
+
+        <div class="flexCol">
+            <label>delay between slides (seconds)</label>
+            <input id="delay" type="number" value="5" />
+
+            <h5>upload images:</h5>
+            <input type="file" onchange="setImage(this)" />
+        </div>
+
+        <button onclick="startSlideshow()">start slideshow</button>
+        
+        <div id="storage">
         
         </div>
     </div>
-    <div id="slideshow">
+    
+    <div id="slideshow" class="hidden">
 
     </div>
 </body>
