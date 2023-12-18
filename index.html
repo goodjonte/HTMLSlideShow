@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .storedImage{
+            max-width: 200px;
+        }
+    </style>
+    <script>
+        function setImage(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                saveImage(reader.result);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function saveImage(srcData) {
+            var newImage = document.createElement("img");
+            newImage.src = srcData;
+            newImage.className = "storedImage";
+            document.getElementById("storage").appendChild(newImage);
+        }
+
+        // function onLoad() {
+        //     setTimeout(() => {
+        //         changeBackground(localStorage.getItem("image"));
+        //     }, 1000);
+        // }
+
+        // onLoad();
+    </script>
+    
+    <div id="menu">
+        <input type="file" onchange="setImage(this)" />
+        <div id="storage" >
+        
+        </div>
+    </div>
+    <div id="slideshow">
+
+    </div>
+</body>
+</html>
